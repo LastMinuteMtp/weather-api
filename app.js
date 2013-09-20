@@ -8,7 +8,7 @@ var owm = {
 };
 
 app.get('/', function (req, resp) {
-  rest.get(owm.url + '?place=Montpellier&lang=fr&mode=html').on('complete', function (response) {
+  rest.get(owm.url + '?q=Montpellier').on('complete', function (response) {
     resp.send(response);
   });
 });
