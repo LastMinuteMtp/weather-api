@@ -4,8 +4,14 @@ var rest = require('restler');
 var app = express();
 
 var owm = {
-  url : 'http://api.openweathermap.org/data/2.5/weather'
+  url: 'http://api.openweathermap.org/data/2.5/weather'
 };
+
+app.get('/', function (req, resp) {
+  rest.get(owm.url + '?place=Montpellier&lang=fr&mode=html').on('complete', function (response) {
+    resp.send(response);
+  });
+});
 
 app.get('/coord/:lat/:long/:format', function (req, resp) {
   rest.get(owm.url + '?lat=' + req.params.lat + '&lon=' + req.params.long + '&lang=fr&mode=' + req.params.format).on('complete', function (response) {
