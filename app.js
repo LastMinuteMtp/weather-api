@@ -1,6 +1,5 @@
 var express = require('express');
 var rest = require('restler');
-var condition = require('./model/condition');
 
 var app = express();
 
