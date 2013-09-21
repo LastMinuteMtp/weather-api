@@ -7,10 +7,12 @@ var owm = {
   url: 'http://api.openweathermap.org/data/2.5/weather'
 };
 
+owm.get = function (parameters, callback) {
+  rest.get(owm.url + '?' + parameters).on('complete', callback);
+};
+
 app.get('/', function (req, resp) {
-  rest.get(owm.url + '?q=Montpellier&lang=fr&mode=html').on('complete', function (response) {
-    resp.send(response);
-  });
+  owm.get('q=Montpellier&lang=fr&mode=html', function (response) { resp.send(response); });
 });
 
 app.get('/coord/:lat/:long/:format', function (req, resp) {
