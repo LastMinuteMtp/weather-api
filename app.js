@@ -4,36 +4,40 @@ var rest = require('restler');
 var app = express();
 
 var owm = {
-  url: 'http://api.openweathermap.org/data/2.5/weather'
+  url: 'http://api.openweathermap.org/data/2.5/weather',
+  lang: '&lang=fr'
 };
 
 owm.get = function (parameters, callback) {
-  rest.get(owm.url + '?' + parameters).on('complete', callback);
+  rest.get(owm.url + '?' + parameters + owm.lang).on('complete', callback);
 };
 
 app.get('/', function (req, resp) {
   owm.get('q=Montpellier&lang=fr&mode=html', function (response) { resp.send(response); });
 });
 
-app.get('/coord/:lat/:long/:format', function (req, resp) {
-  rest.get(owm.url + '?lat=' + req.params.lat + '&lon=' + req.params.long + '&lang=fr&mode=' + req.params.format).on('complete', function (response) {
-    resp.send(response);
+app.get('/weather/:lat/:long/raw.:format', function (req, resp) {
+  owm.get('lat=' + req.params.lat + '&lon=' + req.params.long + '&mode=' + req.params.format, function (response) { resp.send(response); });
+});
+
+app.get('/weather/:place/raw.:format', function (req, resp) {
+  owm.get('q=' + req.params.place + '&mode=' + req.params.format, function (response) { resp.send(response); });
+});
+
+owm.process = function (raw) {
+  var ready = raw;
+  return ready;
+};
+
+app.get('/weather/:lat/:long/ready.:format', function (req, resp) {
+  owm.get('lat=' + req.params.lat + '&lon=' + req.params.long + '&mode=' + req.params.format, function (response) {
+    resp.send(owm.process(response));
   });
 });
 
-app.get('/place/:place/:format', function (req, resp) {
-  rest.get(owm.url + '?q=' + req.params.place + '&lang=fr&mode=' + req.params.format).on('complete', function (response) {
-    resp.send(response);
-  });
-});
-
-app.get('/weather/:lat/:long', function (req, resp) {
-  rest.get(owm.url + '?lat=' + req.params.lat + '&lon=' + req.params.long  + '&lang=fr&mode=json').on('complete', function (response) {
-    var weather = {
-      icon: 'http://openweathermap.org/img/w/' + response.weather[0].icon + '.png',
-      data: response.weather
-    };
-    resp.send(weather);
+app.get('/weather/:place/ready.:format', function (req, resp) {
+  owm.get('q=' + req.params.place + '&mode=' + req.params.format, function (response) {
+    resp.send(owm.process(response));
   });
 });
 
