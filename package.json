@@ -1,5 +1,5 @@
 {
-  "name": "lm-weather",
+  "name": "weather-api",
   "version": "0.0.1",
   "description": "Sample weather OWM API wrapper",
   "main": "app.js",
